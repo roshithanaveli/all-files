@@ -1,0 +1,118 @@
+Data Binding
+------------
+
+Data binding allows us to define the communication between
+component and view, there are four forms of data binding.
+
+1. Template(view) <---- component called as interpolation
+   represented as {{ }}
+
+2. component <---- Template(view) called as Property Binding
+   represented as []
+
+3. Template(view) ----> component called as Event Binding
+   represented as ()
+
+4. Template(view) <----> component called as Two way Binding
+   represented [()]
+
+appcomponent.ts
+---------------
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'AngDemo';
+  name = "Cognizant Technology Services";
+  flowerurl:string ="assets/images/flower1.png";
+  btnStatus:boolean = false;
+
+changeTitle(){
+
+    this.name="Cognizant Academy of Training";
+
+  }
+}
+
+
+appcomponent.html
+-----------------
+<!--The content below is only a placeholder and can be replaced.-->
+<div style="text-align:center">
+  <h1>
+    Welcome to {{ title }}!
+  </h1>
+  
+</div>
+<h1> {{name}}</h1>
+
+<input type="text" [(ngModel)]="username" />
+<h2> Hi Welcome {{username}}</h2>
+
+<img src={{flowerurl}} />
+<h1>Another Image by property binding</h1>
+
+<img [src]='flowerurl' />
+ <button [disabled]="btnStatus" >click</button>
+
+ <button (click)="changeTitle()">Change Title</button>
+<router-outlet></router-outlet>
+
+appmodule.ts
+-------------
+import {FormsModule } from '@angular/forms';
+
+Directives
+----------
+
+There are 3 types of Directives:
+
+1. Component ---> @Component
+
+2. Structural --->  	ngIf, ngFor, ngSwitch etc.,	
+
+3. Attributes  --->  ngClass, ngStyle etc., (these are used to behaviour of the html elements)
+	<div highlight>Hello </div>
+
+
+ngFor
+-----
+.html
+-----
+<ul>
+  <li *ngFor="let n of names">{{n}}</li>
+  
+
+</ul>
+
+.ts
+---
+
+names:string[]=["praveen","Kumar","Kiran"];
+
+BootStrapping
+--------------
+
+we will bootstrap by CDN (content Delivery network)
+
+browse getboorstrap.io click on getstarted
+
+
+copy the css and js file links and paste in head section of index.html page
+
+select any component from bootstrap.io copy and paste in component.html file 
+
+compile and run the application
+
+
+
+
+
+
+
+ 

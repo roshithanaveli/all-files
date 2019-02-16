@@ -1,0 +1,116 @@
+Fetching Records by Spring JdbcTemplate
+--------------------------------------
+We can fetch the records from the database using query() 
+method of JdbcTemplate class where we need to pass the 
+instance of ResultSetExtractor.
+
+jdbcTemplate.query("select * from students",)
+
+class MyExtractData implments ResultSetExtractor{
+	public Student extractData(ResultSet rs)throws SQLException,
+		DataAccessException {
+	List<Employee> list=new ArrayList<Employee>();  
+        while(rs.next()){  
+        Student e=new Student();  
+        e.setId(rs.getInt(1));  
+        e.setName(rs.getString(2));  
+        e.setBranch(rs.getString(3));  
+        list.add(e);  
+        }  
+        return list; 
+
+	}	
+
+}
+public T query(String sql,ResultSetExtractor<T> rse)
+
+ResultSetExtractor: It defines only one method extractData() that 
+                    accepts ResultSet instance as a parameter.
+
+public T extractData(ResultSet rs)throws SQLException,DataAccessException  
+
+
+public List<Students> getAllStudents(){  
+ return template.query("select * from student",new ResultSetExtractor< List<Student> >(){  
+    @Override  
+     public List<Students> extractData(ResultSet rs) throws SQLException,  
+            DataAccessException {  
+      
+        List<Employee> list=new ArrayList<Employee>();  
+        while(rs.next()){  
+        Student e=new Student();  
+        e.setId(rs.getInt(1));  
+        e.setName(rs.getString(2));  
+        e.setSalary(rs.getString(3));  
+        list.add(e);  
+        }  
+        return list;  
+        }  
+    });  
+  }  
+
+
+Fetching records by Spring JdbcTemplate
+---------------------------------------
+ResultSetExtractor, we can use RowMapper interface to 
+fetch the records from the database using query() method 
+of JdbcTemplate class
+
+public T query(String sql,RowMapper<T> rm)
+
+RowMapper interface
+--------------------
+RowMapper interface allows to map a row of the relations with the 
+instance of user-defined class. 
+
+It iterates the ResultSet internally and adds it into the collection.
+
+
+public List<Student> getAllEmployeesRowMapper(){  
+ return template.query("select * from student",new RowMapper<Emp>(){  
+    @Override  
+    public Employee mapRow(ResultSet rs, int rownumber) throws SQLException 
+    {  
+        Student e=new Student();  
+        e.setId(rs.getInt(1));  
+        e.setName(rs.getString(2));  
+        e.setBranch(rs.getString(3));  
+        return e;  
+    }  
+    });  
+}  
+PreparedStatement Queries
+--------------------------
+We can execute parameterized query using Spring JdbcTemplate 
+by the help of execute() method of JdbcTemplate class. 
+
+To use parameterized query, we pass the instance of 
+PreparedStatementCallback in the execute method.
+
+String sql="insert into emp values(?,?,?)";
+public T execute(sql,PreparedStatementCallback<T>);  
+
+PreparedStatementCallback interface
+-----------------------------------
+
+public T doInPreparedStatement(PreparedStatement ps)throws 
+SQLException, DataAccessException
+
+
+public Boolean saveEmployeeByPreparedStatement(final Emp e){  
+    String query="insert into emp values(?,?,?)";  
+    return jdbcTemplate.execute(query,new PreparedStatementCallback<Boolean>(){  
+    @Override  
+    public Boolean doInPreparedStatement(PreparedStatement ps)  
+            throws SQLException, DataAccessException {  
+              
+        ps.setInt(1,e.getNo());  
+        ps.setString(2,e.getName());  
+        ps.setFloat(3,e.getAddress());  
+              
+        return ps.execute();  
+              
+    }  
+    });  
+}  
+

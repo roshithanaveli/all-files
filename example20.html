@@ -1,0 +1,25 @@
+<html>
+<body>
+
+
+<div ng-app="myApp" ng-controller="myCtrl" >
+Enter Name  :<input type="text" ng-model="choice" />
+
+<ol>
+	<li ng-repeat=" x in names | filter : choice "> {{x}} </li>
+
+</ol>
+
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js">
+</script>
+<script>
+	
+	var m1 = angular.module('myApp',[]);
+	m1.controller('myCtrl',function($scope){
+
+		$scope.names=['praveen','kumar','Kiran','Sandeep'];
+	});
+</script>
+</ body>
+</html>

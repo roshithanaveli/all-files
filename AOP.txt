@@ -1,0 +1,197 @@
+Aspect Oriented Programming
+---------------------------
+Aspects enable the modularization of concerns such as transaction management 
+that cut across multiple types and objects. 
+
+AOP is used in the Spring Framework to…
+
+provide declarative enterprise services, especially as a replacement for EJB declarative services. 
+The most important such service is declarative transaction management.
+
+
+Allow users to implement custom aspects, complementing their use of OOP with AOP. 
+
+
+Aspect:
+-------
+A modularization of a concern that cuts across multiple classes. 
+Transaction management is a good example of a crosscutting concern in enterprise Java applications. 
+
+In Spring AOP, aspects are implemented using regular classes (the schema-based approach) or regular classes annotated with the @Aspect annotation (the @AspectJ style). 
+
+
+
+Join point: 
+-----------
+A point during the execution of a program, such as the execution of a method or the handling of an exception. 
+
+In Spring AOP, a join point always represents a method execution.
+
+
+Advice: 
+-------
+Action taken by an aspect at a particular join point. Different types of advice include "around," "before" and "after" advice. (Advice types are discussed below.) Many AOP frameworks, including Spring, model an advice as an interceptor, maintaining a chain of interceptors around the join point.
+
+
+Pointcut:
+---------
+A predicate that matches join points. Advice is associated with a pointcut expression and runs at any join point matched by the pointcut (for example, the execution of a method with a certain name). The concept of join points as matched by pointcut expressions is central to AOP, and Spring uses the AspectJ pointcut expression language by default. 
+
+
+Proxy
+-----
+An object created by the AOP framework in order to implement the aspect contracts (advise method executions and so on). In the Spring Framework, an AOP proxy will be a JDK dynamic proxy or a CGLIB proxy
+
+
+Weaving: 
+--------
+Linking aspects with other application types or objects to create an advised object. This can be done at compile time (using the AspectJ compiler, for example), load time, or at runtime. Spring AOP, like other pure Java AOP frameworks, performs weaving at runtime.
+
+Types of advice:
+---------------
+
+Before advice:
+--------------
+ Advice that executes before a join point, but which does not have the ability to prevent execution flow proceeding to the join point (unless it throws an exception).
+
+After advice
+------------
+Advice to be executed after a join point completes normally: for example, if a method returns without throwing an exception.
+
+After throwing advice: 
+---------------------
+Advice to be executed if a method exits by throwing an exception.
+    
+
+After (finally) advice: 
+-----------------------
+Advice to be executed regardless of the means by which a join point exits (normal or exceptional return).
+
+Around advice: 
+--------------
+Advice that surrounds a join point such as a method invocation. This is the most powerful kind of advice. Around advice can perform custom behavior before and after the method invocation. 
+
+It is also responsible for choosing whether to proceed to the join point or to shortcut the advised method execution by returning its own return value or throwing an exception.
+
+The following jars are required for aop:
+
+    aspectjrt.jar
+    aspectjweaver.jar
+    aspectj.jar
+    aopalliance.jar
+
+
+Account.java
+------------
+package com.springs.aop.model;
+
+public class Account {
+	private String accountNumber;
+	private String accountDescription;
+	public Account(String accountNumber, String accountDescription) {
+		super();
+		this.accountNumber = accountNumber;
+		this.accountDescription = accountDescription;
+	}
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+	public String getAccountDescription() {
+		return accountDescription;
+	}
+}
+
+AccountServiceImpl.java
+-----------------------
+package com.spring.aop.serviceImpl;
+
+import com.springs.aop.model.Account;
+
+public class AccountServiceImpl {
+	public void updateAccountBalance(Account account, long amount ) {
+		System.out.println("Account No: "+account.getAccountNumber()+"Amount "+amount);
+		
+	}
+}
+
+AccountServiceAspect.java
+-------------------------
+package com.spring.aop.services;
+
+import org.aspectj.lang.JoinPoint;
+
+public class AccountServiceAspect {
+	
+	public void validateCard(JoinPoint joinpoint) {
+		System.out.println("Before Method: "+joinpoint.getSignature().getName()+" of Class: "+joinpoint.getTarget().getClass().getSimpleName());
+	}	
+	public void afterAdvice(JoinPoint joinpoint) {
+		System.out.println("After Method: "+joinpoint.getSignature().getName()+" of Class: "+joinpoint.getTarget().getClass().getSimpleName());
+	}
+	
+}
+
+ClientTest.java
+---------------
+package com.spring.aop.client;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.spring.aop.serviceImpl.AccountServiceImpl;
+import com.springs.aop.model.Account;
+
+;public class ClientTest {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+		AccountServiceImpl accountservice = context.getBean("accountserviceAspectimpl",AccountServiceImpl.class);
+		Account acct = new Account("43567","my black money");
+		accountservice.updateAccountBalance(acct, 67548776l);
+		((AbstractApplicationContext) context).close();
+	}
+
+}
+
+applicationContext.xml
+-----------------------
+<?xml version = "1.0" encoding = "UTF-8"?>
+<beans xmlns = "http://www.springframework.org/schema/beans"
+   xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
+   xmlns:aop = "http://www.springframework.org/schema/aop"
+   xsi:schemaLocation = "http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+   http://www.springframework.org/schema/aop 
+   http://www.springframework.org/schema/aop/spring-aop-3.0.xsd ">
+<aop:config>
+		<aop:pointcut expression="execution(* com.spring.aop.serviceImpl.AccountServiceImpl.*(..))" id="SelectAll"/>
+		<aop:aspect ref="accountserviceAspect" >
+				<aop:after method="validateCard" pointcut-ref="SelectAll"/>
+				<!--<aop:after method="afterAdvice" pointcut-ref="SelectAll"/>-->
+        	</aop:aspect>
+</aop:config>
+<bean id="accountserviceAspect" class="com.spring.aop.services.AccountServiceAspect">
+</bean >
+<bean id="accountserviceAspectimpl" class="com.spring.aop.serviceImpl.AccountServiceImpl">
+</bean>
+
+</beans>
+
+	
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

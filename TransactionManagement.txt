@@ -1,0 +1,121 @@
+Transaction Management
+----------------------
+Sequence of action that will be performed to complete database 
+operation and its management is known as Transaction Management. 
+
+All these statements in combination will be treated as ONE action only.
+
+Characteristics of Tx Management
+---------------------------------
+1. (A)tomocity ->All or None of the Instructions
+2. (C)onsistency -->The same element need to be maintained.
+3. (I)solation   --> Independently Executed.
+4. (D)urability---->with stand for a period of time
+
+ 
+Comprehensive transaction support is among the most compelling reasons to use the Spring Framework. The Spring Framework provides a consistent abstraction for transaction management that delivers the following benefits:
+
+    1. Consistent programming model across different transaction APIs 
+	such as Java Transaction API 	(JTA),     JDBC, Hibernate, 
+	Java Persistence API (JPA), and Java Data Objects (JDO).
+    
+    2. Support for declarative transaction management.
+    
+    3. Simpler API for programmatic transaction management than 
+       complex transaction APIs such as JTA.
+    
+    4. Excellent integration with Spring’s data access abstractions. 
+
+Advantages of the Spring Framework’s transaction support model
+---------------------------------------------------------------
+1. Global transactions
+	    
+    a. Use to work with multiple transaction resources like RDBMS or Message Queue (Pros)
+    b. Managed by Application Server (WebSphere, Weblogic) using JTA (Cons)
+    c. JNDI is required to use JTA
+    d. Code can not be reused as JTA is available at server level(Cons)
+    e. Example of Global Transaction : EJB CMT
+
+2. Local transactions
+
+    a. Use to work with specific resource(transaction associated with JDBC)
+    b. Can not work across multiple transaction resource opposite to Global transaction (cons)
+    c. Most of web application uses only single resources hence it is best option to use in normal            app.
+
+3. Spring Framework’s consistent programming model
+
+
+Approaches for Transaction Management
+-------------------------------------
+Programmatic Transaction Management
+-----------------------------------
+Here you will write code for transaction management.Spring API dependency. 
+Not good for maintenance. Good for development. Flexibity.
+
+Declarative Transaction Management
+-----------------------------------
+Here you will use XML or annotation for transaction management. 
+Less flexible but preferable over programmatic approach. 
+In normal case no code is required for transaction management. 
+
+
+Spring Transaction Management Abstraction
+------------------------------------------
+
+    public interface PlatformTransactionManager {
+      TransactionStatus getTransaction(TransactionDefinition definition) 
+	throws TransactionException;
+      void commit(TransactionStatus status) throws TransactionException;
+      void rollback(TransactionStatus status) throws TransactionException;
+    }
+
+TransactionDefinition is an Interface which specifies below 4 points.
+
+    Isolation
+    Propagation
+    Timeout
+    Read-Only status
+
+Isolation Levels are: DEFAULT, READ_COMMITTED, READ_UNCOMMITTED, 
+                      REPEATABLE_READ,SERIALIZABLE.
+
+Propagation:
+
+MANDATORY :Support a current transaction 
+
+NESTED: Execute within a nested transaction
+        if a current transaction exists
+
+NEVER : Execute non-transactionally
+
+NOT_SUPPORTED: Execute non-transactionally
+
+REQUIRED : Support a current transaction
+
+REQUIRES_NEW : Create a new transaction, suspend the current transaction if one exists.
+
+SUPPORTS : Support a current transaction, execute non-transaction if none exists.
+
+Timeout
+
+This setting is used to define how long this transaction may run before timing out (candidate for rolled back by the underlying transaction infrastructure).
+
+Read-Only Status
+
+This setting is used to specify the a read-only transaction. As read only transactions does not modify any data. Hence it is optimized in some case.
+
+TransactionStatus
+-----------------
+
+The TransactionStatus interface provides a simple way for transactional code to control transaction execution and query transaction status.
+
+public interface TransactionStatus extends SavepointManager {
+   boolean isNewTransaction();
+   boolean hasSavepoint();
+   void setRollbackOnly();
+   boolean isRollbackOnly();
+   boolean isCompleted();
+}
+
+
+

@@ -1,0 +1,53 @@
+Spring Boot
+-----------
+
+Spring Boot is an open source Java-based framework used to create a Micro Service.
+
+t is developed by Pivotal Team. 
+
+It is easy to create a stand-alone and production ready spring applications using Spring Boot. 
+Spring Boot contains a comprehensive infrastructure support for developing a micro service and 
+enables you to develop enterprise-ready applications that you can “just run”.
+
+
+Micro Service
+=============
+Micro Service is an architecture that allows the developers to develop and deploy 
+services independently. 
+
+Each service running has its own process and this achieves the lightweight model 
+to support business applications.
+
+Advantages
+===========
+1. Easy deployment
+
+2. Simple scalability
+
+3. Compatible with Containers
+
+4. Minimum configuration
+
+5. Lesser production time
+
+
+Spring Boot
+============
+
+Spring Boot makes it easy to create stand-alone, production-grade Spring based 
+Applications that you can "just run".
+
+
+Capabilities of SpringBoot
+--------------------------
+Create stand-alone Spring applications
+
+Embed Tomcat, Jetty or Undertow directly (no need to deploy WAR files)
+
+Provide opinionated 'starter' dependencies to simplify your build configuration
+
+Automatically configure Spring and 3rd party libraries whenever possible
+
+Provide production-ready features such as metrics, health checks and externalized configuration
+
+Absolutely no code generation and no requirement for XML configuration
