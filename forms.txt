@@ -1,0 +1,187 @@
+Template Driven Form
+With a template driven form, most of the work is done in the template
+
+
+Model Driven Form
+with the model driven form, most of the work is done in the component class
+
+
+app.module.ts
+-------------
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { RouterModule} from '@angular/router';
+
+import { HttpModule } from '@angular/http';
+import { FormsModule } from '@angular/forms';
+import { AppComponent } from './app.component';
+
+import { MyserviceService } from './myservice.service';
+import { NewCmpComponent } from './new-cmp/new-cmp.component';
+import { ChangeTextDirective } from './change-text.directive';
+import { SqrtPipe } from './app.sqrt';
+
+@NgModule({
+   declarations: [
+      SqrtPipe,
+      AppComponent,
+      NewCmpComponent,
+      ChangeTextDirective
+   ],
+   imports: [
+      BrowserModule,
+      HttpModule,
+      FormsModule,
+      RouterModule.forRoot([
+         {path: 'new-cmp',component: NewCmpComponent}
+      ])
+   ],
+   providers: [MyserviceService],
+   bootstrap: [AppComponent]
+})
+
+export class AppModule { }
+
+
+app.component.htm
+------------------
+<div>
+   <form [formGroup] = "formdata" (ngSubmit) = "onClickSubmit(formdata.value)" >
+      <input type = "text" class = "fortextbox" name = "emailid" placeholder = "emailid" 
+         formControlName = "emailid">
+      <br/>
+      <input type = "password" class = "fortextbox" name = "passwd" 
+         placeholder = "passwd" formControlName = "passwd">
+      <br/>
+      <input type = "submit" [disabled] = "!formdata.valid" class = "forsubmit" 
+         value = "Log In">
+   </form>
+</div>
+
+<p>
+   Email entered is : {{emailid}}
+</p>
+
+app.component.ts
+----------------
+import { Component } from '@angular/core';
+import { FormGroup, FormControl, Validators} from '@angular/forms';
+
+@Component({
+   selector: 'app-root',
+   templateUrl: './app.component.html',
+   styleUrls: ['./app.component.css']
+})
+
+export class AppComponent {
+   title = 'Angular 4 Project!';
+   todaydate;
+   componentproperty;
+   emailid;
+   formdata;
+   ngOnInit() {
+      this.formdata = new FormGroup({
+         emailid: new FormControl("", Validators.compose([
+            Validators.required,
+            Validators.pattern("[^ @]*@[^ @]*")
+         ])),
+         passwd: new FormControl("")
+      });
+   }
+   onClickSubmit(data) {this.emailid = data.emailid;}
+}
+
+
+
+Model Driven Form
+------------------
+
+app.module.ts
+-------------
+
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { RouterModule} from '@angular/router';
+
+import { HttpModule } from '@angular/http';
+import { ReactiveFormsModule } from '@angular/forms';
+import { AppComponent } from './app.component';
+
+import { MyserviceService } from './myservice.service';
+import { NewCmpComponent } from './new-cmp/new-cmp.component';
+import { ChangeTextDirective } from './change-text.directive';
+import { SqrtPipe } from './app.sqrt';
+
+@NgModule({
+   declarations: [
+      SqrtPipe,
+      AppComponent,
+      NewCmpComponent,
+      ChangeTextDirective
+   ],
+   imports: [
+      BrowserModule,
+      HttpModule,
+      ReactiveFormsModule,
+      RouterModule.forRoot([
+         {
+            path: 'new-cmp',
+            component: NewCmpComponent
+         }
+      ])
+   ],
+   providers: [MyserviceService],
+   bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+
+app.component.ts
+----------------
+
+import { Component } from '@angular/core';
+import { MyserviceService } from './myservice.service';
+import { FormGroup, FormControl } from '@angular/forms';
+
+@Component({
+   selector: 'app-root',
+   templateUrl: './app.component.html',
+   styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+   title = 'Angular 4 Project!';
+   todaydate;
+   componentproperty;
+   emailid;
+   formdata;
+   constructor(private myservice: MyserviceService) { }
+   ngOnInit() {
+      this.todaydate = this.myservice.showTodayDate();
+      this.formdata = new FormGroup({
+         emailid: new FormControl("angular@gmail.com"),
+         passwd: new FormControl("abcd1234")
+      });
+   }
+   onClickSubmit(data) {this.emailid = data.emailid;}
+}
+
+
+app.component.html
+-------------------
+
+<div>
+   <form [formGroup]="formdata" (ngSubmit) = "onClickSubmit(formdata.value)" >
+      <input type="text" class="fortextbox" name="emailid" placeholder="emailid" 
+         formControlName="emailid">
+      <br/>
+        <input type="password" class="fortextbox" name="passwd" 
+         placeholder="passwd" formControlName="passwd">
+      <br/>
+      
+      <input type="submit" class="forsubmit" value="Log In">
+   </form>
+</div>
+<p>
+   Email entered is : {{emailid}}
+</p>
+

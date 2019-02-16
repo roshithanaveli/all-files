@@ -1,0 +1,593 @@
+Exception Handling in Spring Boot
+---------------------------------
+
+1. @ControllerAdvice
+2. @ExceptionHandler
+
+
+create a userdefined exception class
+------------------------------------
+public class ProductNotFoundException extends RuntimeException {
+   private static final long serialVersionUID = 1L;
+}
+
+create a controllerAdvice class to handle exception
+----------------------------------------------------
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+@ControllerAdvice
+public class ProductExceptionController {
+   @ExceptionHandler(value = ProductNotfoundException.class)
+   public ResponseEntity<Object> exception(ProductNotFoundException exception) {
+      return new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
+   }
+}
+
+create a product service api which will throw ProductNotFoundException when product is not found
+-------------------------------------------------------------------------------------------------
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.tutorialspoint.demo.exception.ProductNotfoundException;
+import com.tutorialspoint.demo.model.Product;
+
+@RestController
+public class ProductServiceController {
+   private static Map<String, Product> productRepo = new HashMap<>();
+   static {
+      Product tv = new Product();
+      honey.setId("1");
+      honey.setName("samsung");
+      
+      
+      Product fridge = new Product();
+      almond.setId("2");
+      almond.setName("lg");
+      productRepo.put(almond.getId(), fridge);
+   }
+   
+   @RequestMapping(value = "/products/{id}", method = RequestMethod.PUT)
+   public ResponseEntity<Object> updateProduct(@PathVariable("id") String id, @RequestBody Product product) { 
+      if(!productRepo.containsKey(id))throw new ProductNotFoundException();
+      productRepo.remove(id);
+      product.setId(id);
+      productRepo.put(id, product);
+      return new ResponseEntity<>("Product is updated successfully", HttpStatus.OK);
+   }
+}
+
+
+MainClass
+----------
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+   public static void main(String[] args) {
+      SpringApplication.run(DemoApplication.class, args);
+   }
+}
+
+
+Product.java
+------------
+public class Product {
+   private String id;
+   private String name;
+
+   public String getId() {
+      return id;
+   }
+   public void setId(String id) {
+      this.id = id;
+   }
+   public String getName() {
+      return name;
+   }
+   public void setName(String name) {
+      this.name = name;
+   }
+}
+
+pox.xml
+-------
+<?xml version = "1.0" encoding = "UTF-8"?>
+<project xmlns = "http://maven.apache.org/POM/4.0.0" 
+   xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation = "http://maven.apache.org/POM/4.0.0 
+   http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>com.tutorialspoint</groupId>
+   <artifactId>demo</artifactId>
+   <version>0.0.1-SNAPSHOT</version>
+   <packaging>jar</packaging>
+   <name>demo</name>
+   <description>Demo project for Spring Boot</description>
+
+   <parent>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-parent</artifactId>
+      <version>1.5.8.RELEASE</version>
+      <relativePath/> 
+   </parent>
+
+   <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+      <java.version>1.8</java.version>
+   </properties>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-web</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-test</artifactId>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+         </plugin>
+      </plugins>
+   </build>
+   
+</project>
+
+
+
+REST  Template
+--------------
+REST webservices
+----------------
+1.@RestController : used to define the RESTful web services. 
+		    It serves JSON, XML and custom response.
+@RestController
+public class ProductServiceController { 
+}
+
+2. @RequestMapping : used to define the Request URI to access the REST Endpoints.
+
+@RequestMapping(value = "/products")
+public ResponseEntity<Object> getProducts() { }
+
+
+3. @RequestBody : used to define the request body content type
+
+public ResponseEntity<Object> createProduct(@RequestBody Product product) {
+}
+
+
+4. @PathVariable : used to define the custom or dynamic request URI. 
+		   The Path variable in request URI is defined as curly braces {}
+
+	public ResponseEntity<Object> updateProduct(@PathVariable("id") String id) {
+	}
+
+5. @RequestParam : used to read the request parameters from the Request URL. 
+                   By default, it is a required parameter. We can also set default value 
+		   for request parameters
+
+	public ResponseEntity<Object> getProduct(
+ 	@RequestParam(value = "name", required = false, defaultValue = "honey") String name) {
+	}
+
+[
+   {
+      "id": "1",
+      "name": "samsung"
+   },
+   {
+      "id": "2",
+      "name": "lg"
+   }
+]
+Rest Template is used to create applications that consume RESTful Web Services. 
+
+The exchange() method is used to consume the web services for all HTTP methods.
+
+
+1. Consuming the GET API by using RestTemplate - exchange() method
+
+
+    a. Autowired the Rest Template Object.
+    b. Use HttpHeaders to set the Request Headers.
+    c. Use HttpEntity to wrap the request object.
+    d. Provide the URL, HttpMethod, and Return type for Exchange() method.
+
+Eg>
+
+@RestController
+public class ConsumeWebService {
+   @Autowired
+   RestTemplate restTemplate;
+
+   @RequestMapping(value = "/template/products")
+   public String getProductList() {
+      HttpHeaders headers = new HttpHeaders();
+      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+      HttpEntity <String> entity = new HttpEntity<String>(headers);
+      
+      return restTemplate.exchange("
+         http://localhost:8080/products", HttpMethod.GET, entity, String.class).getBody();
+   }
+} 
+
+
+PUT:
+---
+
+Consuming PUT API by using RestTemplate - exchange() method
+
+Assume this URL http://localhost:8080/products/3 returns "product updated successfully" msg.
+
+    a. Autowired the Rest Template Object.
+    b. Use HttpHeaders to set the Request Headers.
+    c. Use HttpEntity to wrap the request object. Here, 
+       we wrap the Product object to send it to the request body.
+    d. Provide the URL, HttpMethod, and Return type for exchange() method.
+
+Eg>
+
+@RestController
+public class ConsumeWebService {
+   @Autowired
+   RestTemplate restTemplate;
+
+   @RequestMapping(value = "/template/products/{id}", method = RequestMethod.PUT)
+   public String updateProduct(@PathVariable("id") String id, @RequestBody Product product) {
+      HttpHeaders headers = new HttpHeaders();
+      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+      HttpEntity<Product> entity = new HttpEntity<Product>(product,headers);
+      
+      return restTemplate.exchange(
+         "http://localhost:8080/products/"+id, HttpMethod.PUT, entity, String.class).getBody();
+   }
+}
+
+
+
+Code
+----
+import java.util.Arrays;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import com.tutorialspoint.demo.model.Product;
+
+@RestController
+public class ConsumeWebService {
+   @Autowired
+   RestTemplate restTemplate;
+
+   @RequestMapping(value = "/template/products")
+   public String getProductList() {
+      HttpHeaders headers = new HttpHeaders();
+      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+      HttpEntity<String> entity = new HttpEntity<String>(headers);
+      
+      return restTemplate.exchange(
+         "http://localhost:8080/products", HttpMethod.GET, entity, String.class).getBody();
+   }
+   @RequestMapping(value = "/template/products", method = RequestMethod.POST)
+   public String createProducts(@RequestBody Product product) {
+      HttpHeaders headers = new HttpHeaders();
+      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+      HttpEntity<Product> entity = new HttpEntity<Product>(product,headers);
+      
+      return restTemplate.exchange(
+         "http://localhost:8080/products", HttpMethod.POST, entity, String.class).getBody();
+   }
+   @RequestMapping(value = "/template/products/{id}", method = RequestMethod.PUT)
+   public String updateProduct(@PathVariable("id") String id, @RequestBody Product product) {
+      HttpHeaders headers = new HttpHeaders();
+      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+      HttpEntity<Product> entity = new HttpEntity<Product>(product,headers);
+      
+      return restTemplate.exchange(
+         "http://localhost:8080/products/"+id, HttpMethod.PUT, entity, String.class).getBody();
+   }
+   @RequestMapping(value = "/template/products/{id}", method = RequestMethod.DELETE)
+   public String deleteProduct(@PathVariable("id") String id) {
+      HttpHeaders headers = new HttpHeaders();
+      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+      HttpEntity<Product> entity = new HttpEntity<Product>(headers);
+      
+      return restTemplate.exchange(
+         "http://localhost:8080/products/"+id, HttpMethod.DELETE, entity, String.class).getBody();
+   }
+}
+
+MainClass
+---------
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+   public static void main(String[] args) {
+      SpringApplication.run(DemoApplication.class, args);
+   }
+}
+
+pox.xml
+-------
+
+<?xml version = "1.0" encoding = "UTF-8"?>
+<project xmlns = "http://maven.apache.org/POM/4.0.0" 
+   xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation = "http://maven.apache.org/POM/4.0.0 
+   http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>com.tutorialspoint</groupId>
+   <artifactId>demo</artifactId>
+   <version>0.0.1-SNAPSHOT</version>
+   <packaging>jar</packaging>
+   <name>demo</name>
+   <description>Demo project for Spring Boot</description>
+
+   <parent>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-parent</artifactId>
+      <version>1.5.8.RELEASE</version>
+      <relativePath/> 
+   </parent>
+
+   <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+      <java.version>1.8</java.version>
+   </properties>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-web</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-test</artifactId>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+         </plugin>
+      </plugins>
+   </build>
+   
+</project>
+
+Service Components
+------------------
+Service Components are the class file which contains @Service annotation. 
+
+These class files are used to write business logic in a different layer, separated from @RestController class file
+
+public interface ProductService {
+}
+
+@Service
+public class ProductServiceImpl implements ProductService {
+}
+
+
+public interface ProductService {
+   public abstract void createProduct(Product product);
+   public abstract void updateProduct(String id, Product product);
+   public abstract void deleteProduct(String id);
+   public abstract Collection<Product> getProducts();
+}
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.stereotype.Service;
+import com.tutorialspoint.demo.model.Product;
+
+@Service
+public class ProductServiceImpl implements ProductService {
+   private static Map<String, Product> productRepo = new HashMap<>();
+   static {
+      Product honey = new Product();
+      honey.setId("1");
+      honey.setName("Honey");
+      productRepo.put(honey.getId(), honey);
+
+      Product almond = new Product();
+      almond.setId("2");
+      almond.setName("Almond");
+      productRepo.put(almond.getId(), almond);
+   }
+   @Override
+   public void createProduct(Product product) {
+      productRepo.put(product.getId(), product);
+   }
+   @Override
+   public void updateProduct(String id, Product product) {
+      productRepo.remove(id);
+      product.setId(id);
+      productRepo.put(id, product);
+   }
+   @Override
+   public void deleteProduct(String id) {
+      productRepo.remove(id);
+
+   }
+   @Override
+   public Collection<Product> getProducts() {
+      return productRepo.values();
+   }
+}
+
+RestControllerClass
+-------------------
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.tutorialspoint.demo.model.Product;
+import com.tutorialspoint.demo.service.ProductService;
+
+@RestController
+public class ProductServiceController {
+   @Autowired
+   ProductService productService;
+
+   @RequestMapping(value = "/products")
+   public ResponseEntity<Object> getProduct() {
+      return new ResponseEntity<>(productService.getProducts(), HttpStatus.OK);
+   }
+   @RequestMapping(value = "/products/{id}", method = RequestMethod.PUT)
+   public ResponseEntity<Object> 
+      updateProduct(@PathVariable("id") String id, @RequestBody Product product) {
+      
+      productService.updateProduct(id, product);
+      return new ResponseEntity<>("Product is updated successsfully", HttpStatus.OK);
+   }
+   @RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE)
+   public ResponseEntity<Object> delete(@PathVariable("id") String id) {
+      productService.deleteProduct(id);
+      return new ResponseEntity<>("Product is deleted successsfully", HttpStatus.OK);
+   }
+   @RequestMapping(value = "/products", method = RequestMethod.POST)
+   public ResponseEntity<Object> createProduct(@RequestBody Product product) {
+      productService.createProduct(product);
+      return new ResponseEntity<>("Product is created successfully", HttpStatus.CREATED);
+   }
+}
+
+Product.java
+------------
+public class Product {
+   private String id;
+   private String name;
+
+   public String getId() {
+      return id;
+   }
+   public void setId(String id) {
+      this.id = id;
+   }
+   public String getName() {
+      return name;
+   }
+   public void setName(String name) {
+      this.name = name;
+   }
+}
+
+
+
+MainClass
+----------
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+   public static void main(String[] args) {
+      SpringApplication.run(DemoApplication.class, args);
+   }
+}
+
+pox.xml
+-------
+<?xml version = "1.0" encoding = "UTF-8"?>
+<project xmlns = "http://maven.apache.org/POM/4.0.0" 
+   xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation = "http://maven.apache.org/POM/4.0.0 
+   http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>com.tutorialspoint</groupId>
+   <artifactId>demo</artifactId>
+   <version>0.0.1-SNAPSHOT</version>
+   <packaging>jar</packaging>
+   <name>demo</name>
+   <description>Demo project for Spring Boot</description>
+
+   <parent>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-parent</artifactId>
+      <version>1.5.8.RELEASE</version>
+      <relativePath/> 
+   </parent>
+
+   <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+      <java.version>1.8</java.version>
+   </properties>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-web</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-test</artifactId>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+         </plugin>
+      </plugins>
+   </build>
+</project>
+
+
+
+
+

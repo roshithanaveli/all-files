@@ -130,11 +130,15 @@ spring-mvc-servlet.xml
 
 message.properties
 -------------------
-	userform.email
+## userform.email ##
+
 	NotEmpty.userform.email=Please enter your e-mail.
+
 	Email.userform.email=Your e-mail is incorrect.
-	rform.password ##
+
+	## userform.password ##
 	Size.userform.password=Your password must between 6 and 10 characters.
+
 
 User.java
 ----------
@@ -234,4 +238,7 @@ success.jsp
 	    </div>
 	</body>
 </html>
+
+
+
 

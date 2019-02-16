@@ -1,0 +1,129 @@
+import java.util.List;
+
+import javax.persistence.Query;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
+public class QueryRecords {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		SessionFactory factory = new Configuration()
+								.configure()
+								.addAnnotatedClass(Students.class)
+								.buildSessionFactory();
+		
+		Session session = factory.getCurrentSession();
+		
+		session.beginTransaction();
+		String sql = "SELECT * FROM students";
+		SQLQuery query = session.createSQLQuery(sql);
+		query.addEntity(Students.class);
+		List<Students> list = query.list();
+		
+
+
+
+		
+	//	List<Students> list = session.createQuery("select  S.name Students S").list();
+		List<Students> list= session.createQuery("from Students s where htno<=1000 order by s.htno desc" ).list();
+		
+		//Query query = session.createQuery("update Students set htno=:htno where htno=:htno");
+		//query.setParameter(1, "103");
+		//query.setParameter(2, "999");
+		//int k = query.executeUpdate();
+		System.out.println("Record Updated..");
+		for(Students stu:list) {
+			System.out.println(stu.getHtno()+" "+stu.getName()+" "+stu.getBranch());
+		}
+		
+		session.getTransaction().commit();
+		session.close();
+								
+			
+
+	}
+
+}
+
+
+Student.java
+-------------
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="students")
+public class Students {
+	@Id
+	@Column(name="htno")
+	private int htno;
+	@Column(name="name")
+	private String name;
+	@Column(name="branch")
+	private String branch;
+	public Students(int htno, String name, String branch) {
+		super();
+		this.htno = htno;
+		this.name = name;
+		this.branch = branch;
+	}
+	public Students() {
+		
+	}
+	public int getHtno() {
+		return htno;
+	}
+	public void setHtno(int htno) {
+		this.htno = htno;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getBranch() {
+		return branch;
+	}
+	public void setBranch(String branch) {
+		this.branch = branch;
+	}
+	
+}
+
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+    <session-factory>
+
+        <!-- JDBC Database connection settings -->
+        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/test</property>
+        <property name="connection.username">root</property>
+        <property name="connection.password">admin</property>
+
+        <!-- JDBC connection pool settings ... using built-in test pool -->
+        <property name="connection.pool_size">1</property>
+
+        <!-- Select our SQL dialect -->
+        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+
+        <!-- Echo the SQL to stdout -->
+        <property name="show_sql">true</property>
+
+		<!-- Set the current session context -->
+		<property name="current_session_context_class">thread</property>
+ 
+    </session-factory>
+
+</hibernate-configuration>
+
+

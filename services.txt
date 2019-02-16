@@ -1,42 +1,141 @@
-location
+Hooks for the component
+-----------------------
+constructor
+This is invoked when Angular creates a component or directive by calling new on the class.
+
+ngOnChanges{   }
+Invoked every time there is a change in one of th input properties of the component.
+
+ngOnInit
+Invoked when given component has been initialized.
+This hook is only called once after the first ngOnChanges
+
+ngDoCheck
+Invoked when the change detector of the given component is invoked. 
+It allows us to implement our own change detection algorithm for the given component.
+
+ngOnDestroy
+This method will be invoked just before Angular destroys the component.
+
+ngAfterContentInit { }
+Invoked after Angular performs any content projection into the components view
+
+ngAfterContentChecked
+Invoked each time the content of the given component has been checked by 
+the change detection mechanism of Angular.
+
+
+ngAfterViewInit
+Invoked when the component’s view has been fully initialized.
+
+
+ngAfterViewChecked
+Invoked each time the view of the given component has been checked by the 
+change detection mechanism of Angular.
+
+
+
+
+
+
+Services:
 ---------
-In AngularJS, a service is a function, or object, that is available for, and limited to, 
-your AngularJS application.
-
-AngularJS has about 30 built-in services. One of them is the $location service.
-
-The $location service has methods which return information about the 
-location of the current web page
-
-http
------
-
-The $http service is one of the most common used services in AngularJS applications. 
-The service makes a request to the server, and lets your application handle the response.
 
 
-<html>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-<body>
+1.  ng generate service data
 
-<div ng-app="myApp" ng-controller="myCtrl"> 
+2. Open up the file, located at: /src/app/data.service.ts:
 
-<p>Today's welcome message is:</p>
+import { Injectable } from '@angular/core';
 
-<h1>{{myWelcome}}</h1>
+@Injectable()
 
-</div>
+export class DataService {
 
-<p>The $http service requests a page on the server, and the response is set as the value of the "myWelcome" variable.</p>
+  constructor() { }
 
-<script>
-var app = angular.module('myApp', []);
-app.controller('myCtrl', function($scope, $http) {
-  $http.get("welcome.htm").then(function (response) {
-      $scope.myWelcome = response.data;
-  });
-});
-</script>
+}
 
-</body>
-</html>
+upate the above file to look like below:
+
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+
+@Injectable()
+
+export class DataService {
+
+  private goals = new BehaviorSubject<any>(['The initial goal', 'Another silly life goal']);
+  goal = this.goals.asObservable();
+
+  constructor() { }
+
+  changeGoal(goal) {
+    this.goals.next(goal)
+  }
+
+}
+
+
+
+3. Importing the Service
+
+Each time you generate a service, you need to add it to the providers 
+array of the /src/app/app.module.ts file like so:
+
+
+// Other imports removed for brevity
+import { DataService } from './data.service';
+
+@NgModule({
+  ...
+  providers: [DataService],
+  ...
+})
+
+
+
+4. Using the Service in our Components
+
+Open up our /src/app/home/home.component.ts file and import the service 
+and add it in the constructor via dependency injection:
+
+
+// Other imports removed for brevity
+import { DataService } from '../data.service';
+
+// @Component Decorator..
+
+export class HomeComponent implements OnInit {
+
+  goals = [];
+
+  constructor(private _data: DataService) { }
+
+ngOnInit() {
+    this.itemCount = this.goals.length;
+    this._data.goal.subscribe(res => this.goals = res);
+    this._data.changeGoal(this.goals);
+  }
+
+  addItem() {
+    this.goals.push(this.goalText);
+    this.goalText = '';
+    this.itemCount = this.goals.length;
+    this._data.changeGoal(this.goals);
+  }
+
+  removeItem(i) {
+    this.goals.splice(i, 1);
+    this._data.changeGoal(this.goals);
+  }
+}
+
+
+
+
+
+
+
+
+

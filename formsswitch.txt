@@ -1,0 +1,82 @@
+ngSwitch is a directive which is bound to an expression. 
+It is used to the element tree based on the set of many elements. 
+It has 3 basic elements like below:
+
+
+1. ngSwitch: bind an expression to it.
+
+2. ngSwitchCase: defines an element with the matched value we need to provide the value 
+                  before it.
+
+3. ngSwitchDefault: this is the default case which will be executed if not match found.
+
+appcomponent.ts
+---------------
+
+countries:any[]=[
+{code:'ind',country:'india'},
+{code:'usa',country:'america'},
+{code:'aus',country:'austrilia'}
+];
+
+<select>
+<option *ngFor="let c of countries">{{c.country}}</option>
+</select>
+
+
+
+
+selectedCountry:string;
+choice(code){
+this.selectedCountry=code;
+
+
+
+component.html
+--------------
+
+select country: <select (change)="change($event.target.value)">
+<option> select your country </option>
+
+<option *ngFor="let c of countries" [value]="c.code">
+{{c.country}}</option>
+
+</select>
+
+<div [ngSwitch]="selectedCountry">
+<div *ngSwitchCase="ind"><h1>India Calling Code is 91</h1></div>
+
+<div *ngSwitchCase="use"><h1>India Calling Code is 91</h1></div>
+
+<div *ngSwitchCase="aus"><h1>India Calling Code is 91</h1></div>
+
+<div *ngSwitchDefault><h1>select country</h1></div>
+</div>
+
+
+forms
+------
+<div class="container">
+  <div class="jumboform">
+<form #frm="ngForm" (ngSubmit)="addUse(frm)" >
+<div class="form-group">
+  <label for="name">Name :</label>
+  <input type="text" class="form-control" name="name" ngModel required pattern="[a-zA-Z][a-zA-Z]+" >
+</div>
+<div class="form-group" >
+  <label for="Contact">Contact:</label>
+  <input type="text" class="form-control" name="contact" ngModel required  pattern="[0-9]">
+</div>
+
+<div class="form-group" >
+  <label for="email">email:</label>
+  <input type="text" class="form-control" name="email" ngModel required >
+</div>
+<div>
+  <button type="submit" name="button" [disabled]="frm.valid">Submit</button>
+</div>
+
+</form>
+ </div>
+</div>
+{{frm|json}}
