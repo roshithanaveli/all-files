@@ -1,0 +1,37 @@
+Web Services
+------------
+
+A Web Service is can be defined by following ways:
+
+client server application or application component for communication.
+method of communication between two devices over network.
+
+software system for interoperable machine to machine communication.
+
+collection of standards or protocols for exchanging information between two 
+devices or application.
+
+Two types of Web Services
+-------------------------
+
+1. SOAP
+2. RESTful
+
+
+There are three major web service components.
+=============================================
+
+SOAP  (Simple Object Access Protocol)
+WSDL  (Web Services Description Language)
+UDDI  (Universal Description, Discovery and Integration)
+
+
+Http Methods: GET, POST, PUT, DELETE, OPTIONS, HEAD
+
+
+
+
+1. 
+
+
+

@@ -1,0 +1,140 @@
+
+
+1. To create a service
+
+ng g service myservice
+
+2. myservice.service.specs.ts and myservice.service.ts are created
+
+import { Injectable } from '@angular/core';
+
+@Injectable()
+export class MyserviceService {
+   constructor() { }
+}
+
+the Injectable module is imported from the @angular/core. 
+It contains the @Injectable method and a class called MyserviceService. 
+We will create our service function in this class.
+
+
+3. Before creating a new service, we need to include the service 
+created in the main parent app.module.ts
+
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { RouterModule} from '@angular/router';
+import { AppComponent } from './app.component';
+
+import { MyserviceService } from './myservice.service';
+import { NewCmpComponent } from './new-cmp/new-cmp.component';
+import { ChangeTextDirective } from './change-text.directive';
+import { SqrtPipe } from './app.sqrt';
+
+@NgModule({
+   declarations: [
+      SqrtPipe,
+      AppComponent,
+      NewCmpComponent,
+      ChangeTextDirective
+   ],
+   imports: [
+      BrowserModule,
+      RouterModule.forRoot([
+         {
+            path: 'new-cmp',
+            component: NewCmpComponent
+         }
+      ])
+   ],
+   providers: [MyserviceService],
+   bootstrap: [AppComponent]
+})
+
+export class AppModule { }
+
+
+4. In the service class, we will create a function which will display today’s date. 
+We can use the same function in the main parent component app.component.ts 
+and also in the new component new-cmp.component.ts
+
+
+
+import { Injectable } from '@angular/core';
+@Injectable()
+export class MyserviceService {
+   constructor() { }
+   showTodayDate() {
+      let ndate = new Date();
+      return ndate;
+   }
+}
+
+
+5. see how we can access this function in the component class.
+
+import { Component } from '@angular/core';
+import { MyserviceService } from './myservice.service';
+
+@Component({
+   selector: 'app-root',
+   templateUrl: './app.component.html',
+   styleUrls: ['./app.component.css']
+})
+
+export class AppComponent {
+   title = 'Angular 4 Project!';
+   todaydate;
+   constructor(private myservice: MyserviceService) {}
+   ngOnInit() {
+      this.todaydate = this.myservice.showTodayDate();
+   }
+}
+
+
+6. The ngOnInit function gets called by default in any component created. 
+The date is fetched from the service as shown above. 
+
+To fetch more details of the service, we need to first include the service 
+in the component ts file
+
+
+7, the date in the .html file as shown below -
+
+{{todaydate}}
+<app-new-cmp></app-new-cmp> 
+// data to be displayed to user from the new component class.
+
+
+8. see how to use the service in the new component created.
+
+import { Component, OnInit } from '@angular/core';
+import { MyserviceService } from './../myservice.service';
+
+@Component({
+   selector: 'app-new-cmp',
+   templateUrl: './new-cmp.component.html',
+   styleUrls: ['./new-cmp.component.css']
+})
+
+export class NewCmpComponent implements OnInit {
+   todaydate;
+   newcomponent = "Entered in new component created";
+   constructor(private myservice: MyserviceService) {}
+
+   ngOnInit() {
+      this.todaydate = this.myservice.showTodayDate();
+   }
+}
+
+9. update the component.html as follows:
+
+<p>
+   {{newcomponent}}
+</p>
+<p>
+   Today's Date : {{todaydate}}
+</p>
+
+
+

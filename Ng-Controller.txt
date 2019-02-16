@@ -1,0 +1,138 @@
+AngularJS Controllers
+---------------------
+
+AngularJS controllers are used to control the flow of data of AngularJS application. 
+
+A controller is defined using ng-controller directive. 
+
+A controller is a JavaScript object containing attributes/properties and functions. 
+
+Each controller accepts $scope as a parameter which refers to the application/module 
+that controller is to control.
+
+<html>  
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>  
+<body>  
+  
+<div ng-app="myApp" ng-controller="myCtrl">  
+  
+First Name: <input type="text" ng-model="firstName"><br>  
+Last Name: <input type="text" ng-model="lastName"><br>  
+<br>  
+Full Name: {{firstName + " " + lastName}}  
+  
+</div>  
+  
+<script>  
+var app = angular.module('myApp', []);  
+app.controller('myCtrl', function($scope) {  
+    $scope.firstName = " ";  
+    $scope.lastName = " ";  
+});  
+</script>  
+  
+</body>  
+</html>  
+
+
+
+
+
+
+
+
+
+
+
+var app=anguler.module('myApp',[]);
+app.controller('myCtrl',function($scope){	
+records=[{"name":"praveen","country":"India"},{"name":"Mahesh","country":"USA"},{"name":"mohan","country":"Srilanka"}];
+});
+
+
+
+var app = angular.module('myApp,[]);
+
+app.controller('myCtrl',function($scope){     
+	$scope.firstname="MCIT";
+	$scope.lastName="Hyd";
+});
+Note:
+-----
+Here, the AngularJS application runs inside the <div> is defined by ng-app="myApp".
+
+The AngularJS directive is ng-controller="myCtrl" attribute.
+
+The myCtrl function is a JavaScript function.
+
+AngularJS will invoke the controller with a $scope object.
+
+In AngularJS, $scope is the application object (the owner of application variables 
+and functions).
+
+The controller creates two properties (variables) in the scope (firstName and lastName).
+
+The ng-model directives bind the input fields to the controller properties 
+(firstName and lastName).
+
+Angularjs controller examples with methods 
+-------------------------------------------
+<html>  
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>  
+<body>  
+  
+<div ng-app="myApp" ng-controller="personCtrl">  
+  
+First Name: <input type="text" ng-model="firstName"><br>  
+Last Name: <input type="text" ng-model="lastName"><br>  
+<br>  
+Full Name: {{fullName()}}  
+  
+</div>  
+<script>  
+var app = angular.module('myApp', []);  
+app.controller('personCtrl', function($scope) {  
+    $scope.firstName = "Praveen";  
+    $scope.lastName = "Kumar";  
+    $scope.fullName = function() {  
+        return $scope.firstName + " " + $scope.lastName;  
+    };  
+});  
+</script>  
+  
+</body>  
+</html>  
+
+
+AngularJS Controller in external files
+---------------------------------------
+
+In larger applications, generally the controllers are stored in external files.
+
+Create an external file named "personController.js" to store controller.
+
+Here, "personController.js" is:
+
+   angular.module('myApp', []).controller('personCtrl', function($scope) {  
+    $scope.firstName = "Praveen",  
+    $scope.lastName = "Kumar",  
+    $scope.fullName = function() {  
+        return $scope.firstName + " " + $scope.lastName;  
+    }  
+});  
+
+Now write the html file as like this
+------------------------------------
+<html>  
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>  
+<body>  
+<div ng-app="myApp" ng-controller="personCtrl">  
+First Name: <input type="text" ng-model="firstName"><br>  
+Last Name: <input type="text" ng-model="lastName"><br>  
+<br>  
+Full Name: {{firstName + " " + lastName}}  
+</div>  
+<script src="personController.js"></script>  
+</body>  
+</html>  
+

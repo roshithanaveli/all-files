@@ -1,0 +1,64 @@
+Execution of Angularjs Application
+----------------------------------
+
+1. Load static DOM (HTML)
+
+2. Load angularjs framework.
+
+3. angularjs framework will try to identify ng-app directive, 
+   if found starts loading (bootstrapping) our angularjs application.
+   
+   uses angular.bootstrap(document,[module_name]);
+
+4. Angular dealS with dependency injection using $injector(container)
+   $injector will create $compile and $rootscope objects and inject
+   into our application.
+
+5. $compile will be used to compile or understand static DOM
+   $compile(document).($rootscope)
+
+6. $injector will creates the objects identified by $compile.
+
+7. $rootscope stores the model objects which are already created by $injector
+
+   $rootscope = { "m":"  ","m1":"  ".....}
+
+8. $compile will wrap created model objects into $rootscope object.
+   $compile(doucument)($rootscope)
+
+9. $rootscope's data will be available throughout the application 
+   life cycle for the client.
+
+10. $apply method on $rootscope to persist the state of $rootscope.
+    $rootscope.$apply();
+
+11. Static DOM will be converted into dynamic DOM
+
+
+
+
+AngularJS Directives
+--------------------
+
+AngularJS facilitates you to extend HTML with new attributes. 
+These attributes are called directives.
+
+There is a set of built-in directive in AngularJS which offers functionality 
+to your applications. You can also customize or write our own directives.
+
+
+Directives are special attributes starting with ng- prefix.
+
+
+
+1. ng-app	: starts an AngularJS Application.
+
+2. ng-init	: Initializes application data.
+
+3. ng-model	: Defines the model that is variable to be used in AngularJS.
+
+4. ng-repeat	: Repeats html elements for each item in a collection.
+
+5. ng-bind	: Binds the AngularJS Application data to HTML tags.
+
+

@@ -1,0 +1,178 @@
+users:any[]=[
+{id:101,name:'praveen',city:'hyderabad',salary:20000},
+{id:102,name:'niranjan',city:'chennnai',salary:80000},
+{id:103,name:'krishna',city:'kolkata',salary:75000},
+{id:104,name:'kumar',city:'mumbai',salary:54000},
+{id:105,name:'shamem',city:'delhi',salary:63000},
+]
+
+app.component.ts
+-------------
+import { Component, OnInit } from '@angular/core';
+import { UsersService } from './services/users.service';
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit{
+  title = 'servex';
+  constructor(private usersv:UsersService){
+
+  }
+  users:any[];
+
+
+      ngOnInit(){
+      this.users=this.usersv.getUsers();
+    }
+}
+
+
+app.module.ts
+-------------
+
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { UsersService } from './services/users.service';
+import {HttpClientModule} from '@angular/common/http';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule
+  ],
+  providers: [UsersService]
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+
+app.component.html
+-------------------
+{{title}}
+
+
+<table>
+<tr>
+  <td>Id</td>
+  <td>Name</td>
+  <td>City</td>
+  <td>Salary</td>
+  </tr>
+<tr *ngFor="let user of users">
+  <td>{{user.id}}</td>
+  <td>{{user.name}}</td>
+  <td>{{user.city}}</td>
+  <td>{{user.salary}}</td>
+  </tr>
+</table> 
+
+<router-outlet></router-outlet>
+
+
+usersservice.ts
+---------------
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UsersService {
+
+  constructor() { }
+  getUsers(){
+    return [
+      {id:101,name:'praveen',city:'hyderabad',salary:2},
+      {id:102,name:'niranjan',city:'chennnai',salary:80000},
+      {id:103,name:'krishna',city:'kolkata',salary:75000},
+      {id:104,name:'kumar',city:'mumbai',salary:54000},
+      {id:105,name:'shamem',city:'delhi',salary:63000}
+      ];
+  }
+}
+
+
+
+Form Validation
+---------------
+Form State and Input State
+
+Forms can be created in two ways: reactive and template-driven, key differences are:
+
+ 			Reactive 					Template-driven
+			--------					----------------
+Setup (form model) 	More explicit, created in component class 	Less explicit, created by directives
+
+Data model 		Structured 					Unstructured
+
+Predictability 		Synchronous 					Asynchronous
+
+Form validation 	Functions 					Directives
+
+Mutability 		Immutable 					Mutable
+
+Scalability 		Low-level API access 				Abstraction on top of APIs
+
+Both reactive and template-driven forms share underlying building blocks.
+
+    FormControl tracks the value and validation status of an individual form control.
+
+    FormGroup tracks the same values and status for a collection of form controls.
+
+    FormArray tracks the same values and status for an array of form controls.
+
+    ControlValueAccessor creates a bridge between Angular FormControl instances and native DOM     	    elements.
+
+
+AngularJS is constantly updating the state of both the form and the input fields.
+
+Input fields have the following states:
+
+    $untouched The field has not been touched yet
+    $touched The field has been touched
+    $pristine The field has not been modified yet
+    $dirty The field has been modified
+    $invalid The field content is not valid
+    $valid The field content is valid
+
+They are all properties of the input field, and are either true or false.
+
+Forms have the following states:
+
+    $pristine No fields have been modified yet
+    $dirty One or more have been modified
+    $invalid The form content is not valid
+    $valid The form content is valid
+    $submitted The form is submitted
+
+They are all properties of the form, and are either true or false.
+
+
+
+
+<input id="name" name="name" class="form-control"
+      required minlength="4" appForbiddenName="bob"
+      [(ngModel)]="hero.name" #name="ngModel" >
+
+<div *ngIf="name.invalid && (name.dirty || name.touched)"
+    class="alert alert-danger">
+
+  <div *ngIf="name.errors.required">
+    Name is required.
+  </div>
+  <div *ngIf="name.errors.minlength">
+    Name must be at least 4 characters long.
+  </div>
+  <div *ngIf="name.errors.forbiddenName">
+    Name cannot be Bob.
+  </div>
+
+</div>

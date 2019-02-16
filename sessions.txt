@@ -1,0 +1,338 @@
+Session Object
+--------------
+
+A Session is used to get a physical connection with a database. 
+
+The Session object is lightweight and designed to be instantiated each time an interaction is needed with the database. 
+
+Persistent objects are saved and retrieved through a Session object.
+
+Methods
+-------
+
+1. Transaction beginTransaction()
+Begin a unit of work and return the associated Transaction object.
+
+2. void cancelQuery()
+Cancel the execution of the current query.
+
+3. void clear()
+Completely clear the session.
+
+4. Connection close()
+End the session by releasing the JDBC connection and cleaning up.
+
+5. Criteria createCriteria(Class persistentClass)
+Create a new Criteria instance, for the given entity class, or a superclass of an entity class.
+
+6. Criteria createCriteria(String entityName)
+Create a new Criteria instance, for the given entity name.
+
+7. Serializable getIdentifier(Object object)
+Return the identifier value of the given entity as associated with this session.
+
+8. Query createFilter(Object collection, String queryString)
+Create a new instance of Query for the given collection and filter string.
+
+9. Query createQuery(String queryString)
+Create a new instance of Query for the given HQL query string.
+
+10. SQLQuery createSQLQuery(String queryString)
+Create a new instance of SQLQuery for the given SQL query string.
+
+11. void delete(Object object)
+Remove a persistent instance from the datastore.
+
+12. void delete(String entityName, Object object)
+Remove a persistent instance from the datastore.
+
+13. Session get(String entityName, Serializable id)
+Return the persistent instance of the given named entity with the given identifier, 
+or null if there is no such persistent instance.
+
+14. SessionFactory getSessionFactory()
+Get the session factory which created this session.
+
+15. void refresh(Object object)
+Re-read the state of the given instance from the underlying database.
+
+16. Transaction getTransaction()
+Get the Transaction instance associated with this session.
+
+17. boolean isConnected()
+Check if the session is currently connected.
+
+18. boolean isDirty()
+Does this session contain any changes which must be synchronized with the database?
+
+19. boolean isOpen()
+Check if the session is still open.
+
+20. Serializable save(Object object)
+Persist the given transient instance, first assigning a generated identifier.
+
+21. void saveOrUpdate(Object object)
+Either save(Object) or update(Object) the given instance.
+
+22. void update(Object object)
+Update the persistent instance with the identifier of the given detached instance.
+
+23. void update(String entityName, Object object)
+Update the persistent instance with the identifier of the given detached instance.
+
+Mapping file
+------------
+
+1. XML based
+
+2. Java Annotation Based
+
+XML Based:
+----------
+<hibernate-mapping>
+	<class name="NameOfThePojoClass" table="DatabaseTable" >
+		<id name = "id" type = "int" column = "id">
+         		<generator class="native"/>
+      		</id>
+      
+      		<property name = "firstName" column = "first_name" type = "string"/>
+      		<property name = "lastName" column = "last_name" type = "string"/>
+      		<property name = "salary" column = "salary" type = "int"/> 
+	</class>
+</hibernate-mapping>
+
+
+Annotation Based
+----------------
+
+@Entity
+@Table(name="tablename")
+@Column(name="ColumnName")
+
+
+Criteria	 To filter queries
+---------
+
+
+Criteria cr = session.createCriteria(Employee.class);
+List results = cr.list();
+
+
+cr.add(Restrictions.rttype):
+
+rttype are of
+
+1. gt(field,value)
+2. lt(field,value)
+3. Restrictions.like
+4. between("salary", 1000, 2000))
+
+
+Logical operator (or)
+----------------
+Criterion salary = Restrictions.gt("salary", 2000);
+Criterion name = Restrictions.ilike("firstNname","zara%");
+
+
+		LogicalExpession x = Restrictions.or(C1,C2)
+		cr.add(x);
+		cr.list();
+
+LogicalExpression orExp = Restrictions.or(salary, name);
+
+cr.add( orExp );
+List results = cr.list();
+
+
+Logical operator (and)
+------------------------
+
+Criterion salary = Restrictions.gt("salary", 2000);
+Criterion name = Restrictions.ilike("firstNname","zara%");
+LogicalExpression orExp = Restrictions.and(salary, name);
+cr.add( orExp );
+List results = cr.list();
+
+
+To get the range of records
+----------------------------
+
+Criteria cr = session.createCriteria(Employee.class);
+cr.setFirstResult(1);
+cr.setMaxResults(10);
+List results = cr.list();
+
+
+To Sort
+-------
+criteria.addOrder(Order.desc("field"));
+
+criteria.addOrder(Order.asc("field");
+
+
+
+  
+
+
+public class Employee {  
+private int id;  
+private String name;  
+private float salary;  
+  
+//getters and setters  
+  
+}  
+
+
+employee.hbm.xml
+----------------
+<?xml version='1.0' encoding='UTF-8'?>  
+<!DOCTYPE hibernate-mapping PUBLIC  
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN"  
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">  
+  
+<hibernate-mapping>  
+<class name="com.javatpoint.Employee" table="emp558">  
+          <id name="id">  
+          <generator class="assigned"></generator>  
+          </id>  
+            
+          <property name="name"></property>  
+          <property name="salary"></property>  
+</class>  
+            
+</hibernate-mapping>  
+
+
+
+
+com.examples.spring.daoImpl
+----------------------------
+  
+import org.springframework.orm.hibernate3.HibernateTemplate;  
+import java.util.*;  
+public class EmployeeDao {  
+
+HibernateTemplate template;  
+
+//method to save employee  
+public void saveEmployee(Employee e){  
+    template.save(e);  
+}  
+
+//method to return all employees  
+public List<Employee> getEmployees(){  
+    List<Employee> list=new ArrayList<Employee>();  
+    list=template.loadAll(Employee.class);  
+    return list;  
+} 
+ 
+}  
+
+applicationContext.xml
+----------------------
+
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans  
+    xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:p="http://www.springframework.org/schema/p"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">  
+  
+     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">  
+        <property name="driverClassName"  value="oracle.jdbc.driver.OracleDriver"></property>  
+        <property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"></property>  
+        <property name="username" value="system"></property>  
+        <property name="password" value="oracle"></property>  
+    </bean>  
+      
+    <bean id="mysessionFactory"  class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">  
+        <property name="dataSource" ref="dataSource"></property>  
+          
+        <property name="mappingResources">  
+        <list>  
+        <value>employee.hbm.xml</value> 
+	</list>  
+        </property>  
+          
+        <property name="hibernateProperties">  
+            <props>  
+                <prop key="hibernate.dialect"></prop>  
+                <prop key="hibernate.hbm2ddl.auto">update</prop>  
+                <prop key="hibernate.show_sql">true</prop>  
+                  
+            </props>  
+        </property>  
+    </bean>  
+      
+    <bean id="template" class="org.springframework.orm.hibernate3.HibernateTemplate">  
+    <property name="sessionFactory" ref="mysessionFactory"></property>  
+    </bean>  
+      
+    <bean id="d" class="EmployeeDao">  
+    <property name="template" ref="template"></property>  
+    </bean>  
+     </beans> 
+
+
+
+
+
+com.examples.spring.client
+
+
+TestMain.java
+------------=
+
+import org.springframework.beans.factory.BeanFactory;  
+import org.springframework.beans.factory.xml.XmlBeanFactory;  
+import org.springframework.core.io.ClassPathResource;  
+import org.springframework.core.io.Resource;  
+  
+public class InsertTest {  
+public static void main(String[] args) {  
+      
+    Resource r=new ClassPathResource("applicationContext.xml");  
+    BeanFactory factory=new XmlBeanFactory(r);  
+      
+    EmployeeDao dao=(EmployeeDao)factory.getBean("d");  
+      
+    Employee e=new Employee();  
+    e.setId(114);  
+    e.setName("varun");  
+    e.setSalary(50000);  
+      
+    dao.saveEmployee(e);  
+      
+}  
+} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

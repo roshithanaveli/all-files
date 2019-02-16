@@ -53,6 +53,19 @@ appcomponent.html
 
 <input type="text" [(ngModel)]="username" />
 <h2> Hi Welcome {{username}}</h2>
+button (click)="validateAge()">validate</button>
+
+
+
+<div *ngIf="un>=18 ; else minor">
+<p> Eligible for voting
+</div>
+<ng-template #minor>
+<p> Your are minor not eligibe </P>
+</ng-template>
+
+
+
 
 <img src={{flowerurl}} />
 <h1>Another Image by property binding</h1>

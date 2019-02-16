@@ -1,0 +1,90 @@
+AngularJs
+---------
+--> It is a open source web application framework, which is used to create databinding in 
+    web pages.
+
+
+--> AngularJS extends HTML attributes with Directives, and binds data to HTML with Expressions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+dynamic binding using JavaScript
+--------------------------------
+<html>
+	<body>
+		ENTER TEXT : <input type="text" id="m1" onkeyup="bind()"/>
+		<br/>
+		VIEW TEXT : <label id="v1"></label>
+		<script>
+			function bind(){
+				var model = document.getElementById("m1");
+				var view = document.getElementById("v1");
+				view.innerHTML = model.value;
+			};
+		</script>
+	</body>
+</html>
+
+
+Advantages of AngularJs:
+------------------------
+1. Dependency Injection
+
+2. Two Way Binding between Data and Model
+
+3. Model - View - Controller
+
+4. Testing is easier
+
+5. Full fledged Directive 
+
+
+
+AngularJS extends HTML with ng-directives.
+
+ng-app --> directive defines an AngularJS application.
+
+ng-model --> directive binds the value of HTML controls (input, select, textarea) 
+	     to application data.
+
+ng-bind -->  directive binds application data to the HTML view. 
+
+<html>
+<head>
+	<script src="d://angular.min.js"></script>
+</head>
+<body>
+
+	<div ng-app=" " myapp1",[f1,f2]">
+		Enter your name :<input type="text" ng-model="name" />
+		Your Name is : {{name}}
+		Also your name is : <p ng-bind="name" />
+	<div ng-app="myapp2",[f3,f4]>
+		Enter your name :<input type="text" ng-model="name" />
+		Your Name is : {{name}}
+		Also your name is : <p ng-bind="name" />
+	</div>
+		Enter your name :<input type="text" ng-model="name" />
+		Your Name is : {{name}}
+		Also your name is : <p ng-bind="name" />
+	</div>
+</body>
+</html>
+
+
+
+	
